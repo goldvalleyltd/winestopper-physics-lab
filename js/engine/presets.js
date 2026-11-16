@@ -1,6 +1,6 @@
 /**
  * WineStopper Physics Lab - Industrial Engineering Presets
- * Calibrated per Gold Valley Engineering Parameters (Zamak 3/5, SUS304 7.93 g/cm³, H65 Brass 8.50 g/cm³, 6061 Al, Shore A 60±5)
+ * Calibrated per Gold Valley Engineering Parameters (Zamak 3/5, SUS304 7.93 g/cm³, H65 Brass 8.50 g/cm³, 6061 Al, Shore A 45–55)
  */
 
 (function (root, factory) {
@@ -46,9 +46,9 @@
         },
         'cu-h65': {
             id: 'cu-h65',
-            name: 'H65 / C26000 Solid Brass (8.50 g/cm³)',
-            nameEn: 'H65 / C26000 Solid Brass (8.50 g/cm³)',
-            nameZh: 'H65 实心黄铜 (C26000 - 8.50 g/cm³)',
+            name: 'H65 / C26800 Solid Brass (8.50 g/cm³)',
+            nameEn: 'H65 / C26800 Solid Brass (8.50 g/cm³)',
+            nameZh: 'H65 实心黄铜 (C26800 - 8.50 g/cm³)',
             density: 8.50,
             description: 'Maximum specific gravity and heirloom weight for executive distillery & reserve club releases',
             descriptionEn: 'Maximum specific gravity and heirloom weight for executive distillery & reserve club releases',
@@ -159,7 +159,7 @@
     };
 
     // 4. Lower Tapered Insert Stem & Elastomer Seal Configurations (Z < 0 below bottle rim)
-    // Standard CETIE 18.5 mm ± 0.5 mm bottleneck; elastomer Shore A 60±5 per engineering-params.md
+    // Standard CETIE 18.5 mm ± 0.5 mm bottleneck; elastomer Shore A 45–55 per Gold Valley wine-stopper teardown
     const BASE_CONFIGS = {
         'zinc-silicone': {
             id: 'zinc-silicone',
@@ -171,9 +171,9 @@
             maxInsertDiameterMm: 20.5,
             minInsertDiameterMm: 15.0,
             frictionTorqueBonusNmm: 9.5,
-            description: 'Standard commercial barware base with Shore A 60±5 food-grade silicone ribs (fits Ø17.5–19.5 mm necks)',
-            descriptionEn: 'Standard commercial barware base with Shore A 60±5 food-grade silicone ribs (fits Ø17.5–19.5 mm necks)',
-            descriptionZh: '主流商业酒塞底座，配邵氏硬度 60±5 食品级硅胶三环（适配 Ø17.5~19.5 mm 标准红酒瓶口）'
+            description: 'Standard commercial barware base with Shore A 45–55 food-grade silicone ribs (fits Ø17.5–19.5 mm necks)',
+            descriptionEn: 'Standard commercial barware base with Shore A 45–55 food-grade silicone ribs (fits Ø17.5–19.5 mm necks)',
+            descriptionZh: '主流商业酒塞底座，配邵氏硬度 45–55 食品级硅胶三环（适配 Ø17.5~19.5 mm 标准红酒瓶口）'
         },
         'ss304-silicone': {
             id: 'ss304-silicone',

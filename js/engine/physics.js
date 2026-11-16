@@ -96,7 +96,7 @@
                 'Tooling Core-Pulling: Switch to 30%–50% Internal Slide Core-Pulling (wall thickness 2.0–3.0 mm) to cut top mass and eliminate surface sink marks.'
             );
             dfmRecommendationsEn.push(
-                'Counterweight Base: Upgrade lower stem to Heavy SUS304 CNC Stainless Steel (38 g) + Shore A 60±5 3-rib food-grade silicone.'
+                'Counterweight Base: Upgrade lower stem to Heavy SUS304 CNC Stainless Steel (38 g) + Shore A 45–55 3-rib food-grade silicone.'
             );
             dfmRecommendationsEn.push(
                 'Neck Geometry: Shorten the decorative transition neck by 4–6 mm or switch substrate to 6061 Anodized Aluminium.'
@@ -106,7 +106,7 @@
                 '模具滑块抽芯减重：强烈建议改为 30%~50% 内部抽芯掏空工艺（控制均匀壁厚 2.0~3.0 mm），既大幅下移质心又彻底消除电镀表面缩水起泡。'
             );
             dfmRecommendationsZh.push(
-                '下部压舱配重升级：建议将下部锥体升级为 38 g 加重型 SUS304 不锈钢车削底座 + 邵氏硬度 60±5 食品级三道硅胶圈。'
+                '下部压舱配重升级：建议将下部锥体升级为 38 g 加重型 SUS304 不锈钢车削底座 + 邵氏硬度 45–55 食品级三道硅胶圈。'
             );
             dfmRecommendationsZh.push(
                 '结构降高优化：建议将顶件连接颈部缩短 4~6 mm，或改用 6061 阳极氧化铝合金基材。'
@@ -122,14 +122,14 @@
                 'Core-Pulling Optimization: Apply 30% Standard Core-Pulling (~3.0 mm uniform wall) to bring top mass into the 45–75 g sweet spot.'
             );
             dfmRecommendationsEn.push(
-                'Elastomer Seal Spec: Specify Shore A 60±5 food-grade silicone 3-rib rings to prevent upward pop-out on flared bottlenecks.'
+                'Elastomer Seal Spec: Specify Shore A 45–55 food-grade silicone 3-rib rings to prevent upward pop-out on flared bottlenecks.'
             );
 
             dfmRecommendationsZh.push(
                 '抽芯工艺建议：建议采用 30% 标准滑块抽芯（保持 3.0 mm 均匀壁厚），将顶件净重控制在 45~75 g 黄金手感区间。'
             );
             dfmRecommendationsZh.push(
-                '密封胶圈校准：建议指定邵氏硬度 60±5 食品级硅胶三环阶梯结构，防止在微锥形瓶口中向上回弹滑出。'
+                '密封胶圈校准：建议指定邵氏硬度 45–55 食品级硅胶三环阶梯结构，防止在微锥形瓶口中向上回弹滑出。'
             );
         } else {
             dfmRecommendationsEn.push(

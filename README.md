@@ -53,7 +53,7 @@ Relative to the bottle mouth opening plane ($Z = 0$):
 $$Z_{cg} = \frac{W_{ornament} \cdot Z_1 + W_{cone} \cdot Z_2 + W_{silicone} \cdot Z_3}{W_{total}}$$
 
 - 🟢 **Stable ($Z_{cg} \le +15\text{ mm}$)**: Optimal leverage ratio; zero wobble.
-- 🟡 **Marginal ($+15\text{ mm} < Z_{cg} \le +25\text{ mm}$)**: Requires Shore A 60±5 food-grade silicone 3-rib rings and 30% standard core-pulling.
+- 🟡 **Marginal ($+15\text{ mm} < Z_{cg} \le +25\text{ mm}$)**: Requires Shore A 45–55 food-grade silicone 3-rib rings and 30% standard core-pulling.
 - 🔴 **High Risk ($Z_{cg} > +25\text{ mm}$)**: Severe top-heavy hazard. Recommend 30%–50% core-pulling hollowing or a heavy SUS304 stainless steel counterweight stem.
 
 ---
