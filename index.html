@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WineStopper Physics Lab | 3D Metal Wine Stopper Center of Gravity &amp; DFM Calculator</title>
+  <meta name="description"
+    content="Free browser-based 3D engineering calculator for custom metal wine stoppers. Evaluate alloy mass (Zamak 3/5, SUS304, H65 Brass), core-pulling wall thickness, composite center of gravity (CG), 15° bottle tilt tipping stability, and export carton freight.">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/lab-theme.css">
+
+  <!-- Three.js & OrbitControls via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+
+  <div class="lab-container">
+
+    <!-- 1. Top Navigation & Brand Header -->
+    <header class="lab-header">
+      <div class="brand-title-group">
+        <div class="brand-logo" aria-hidden="true">GV</div>
+        <div>
+          <h1 class="lab-title" data-i18n-en="WineStopper Physics Lab"
+            data-i18n-zh="WineStopper Physics Lab · 金属酒塞克重与重心力学实验室">WineStopper Physics Lab</h1>
+          <div class="lab-subtitle"
+            data-i18n-en="3D Center of Gravity, 15° Anti-Tilt Statics, Die-Cast Core-Pulling &amp; Export Freight Simulator"
+            data-i18n-zh="3D 组合质心积分、15° 瓶口抗倾覆力矩、压铸滑块抽芯与外贸防爆箱运费测算系统">
+            3D Center of Gravity, 15° Anti-Tilt Statics, Die-Cast Core-Pulling &amp; Export Freight Simulator
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button type="button" id="btn-lang-toggle" class="lang-switch-btn" aria-label="Switch Language (切换中英文)">
+          🌐 <span id="lang-toggle-label">中文</span>
+        </button>
+        <div class="header-badge">
+          <a href="https://www.goldvalleyltd.com/wine-barware/wine-stoppers/" target="_blank" rel="noopener"
+            style="color: inherit; text-decoration: none;"
+            data-i18n-en="⚡ Engineered by Gold Valley Hardware Lab ↗"
+            data-i18n-zh="⚡ 金瓒五金酒具工程实验室出品 ↗">⚡ Engineered by Gold Valley Hardware Lab ↗</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. Main Split Workspace -->
+    <main class="main-grid">
+
+      <!-- Left Column: Parametric & STL Controls -->
+      <aside class="control-panel">
+        <div class="panel-card">
+
+          <!-- Dual-Channel Switcher -->
+          <div class="mode-tabs" role="tablist" aria-label="Calculation Mode">
+            <button type="button" id="tab-quick" class="mode-tab-btn active" role="tab" aria-selected="true"
+              data-i18n-en="⚡ Quick Estimate Mode" data-i18n-zh="⚡ 快速参数拟合法 (Quick Mode)">
+              ⚡ Quick Estimate Mode
+            </button>
+            <button type="button" id="tab-pro" class="mode-tab-btn" role="tab" aria-selected="false"
+              data-i18n-en="🧊 Pro 3D STL Mesh" data-i18n-zh="🧊 3D 网格积分法 (Pro STL)">
+              🧊 Pro 3D STL Mesh
+            </button>
+          </div>
+
+          <!-- ================= [Channel A] Quick Parametric Mode ================= -->
+          <div id="section-quick-mode">
+            <h2 class="panel-section-title">
+              <span class="step-badge">1</span>
+              <span data-i18n-en="Top Ornament Geometry (Above Collar)" data-i18n-zh="顶部装饰头几何尺寸 (瓶口圆台之上)">Top Ornament Geometry (Above Collar)</span>
+            </h2>
+
+            <!-- Shape Fullness Factor -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="select-shape-preset" data-i18n-en="Ornament Silhouette Type (k_shape)"
+                  data-i18n-zh="顶件造型形态系数 (Shape Factor)">Ornament Silhouette Type (k_shape)</label>
+              </div>
+              <select id="select-shape-preset" class="form-select">
+                <option value="figurine" selected data-i18n-en="3D Animal Bust / Stag Antlers (k = 0.18)"
+                  data-i18n-zh="复杂 3D 动物首 / 鹿角雕塑 (k = 0.18)">3D Animal Bust / Stag Antlers (k = 0.18)</option>
+                <option value="geometric" data-i18n-en="Faceted Sphere / Polyhedron (k = 0.48)"
+                  data-i18n-zh="几何多面体 / 切面球体 (k = 0.48)">Faceted Sphere / Polyhedron (k = 0.48)</option>
+                <option value="crest" data-i18n-en="Flat Shield / Winery Medallion (k = 0.32)"
+                  data-i18n-zh="扁平盾徽 / 酒庄浮雕徽标 (k = 0.32)">Flat Shield / Winery Medallion (k = 0.32)</option>
+                <option value="column" data-i18n-en="Solid T-Bar / Cylindrical Cap (k = 0.65)"
+                  data-i18n-zh="实心柱状 / T型酒塞头 (k = 0.65)">Solid T-Bar / Cylindrical Cap (k = 0.65)</option>
+              </select>
+            </div>
+
+            <!-- Width / Span (X) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="slider-length" data-i18n-en="Ornament Width / Span (X)"
+                  data-i18n-zh="顶件横向跨度 / 宽 (X)">Ornament Width / Span (X)</label>
+                <span id="val-length" class="form-value-badge">55 mm (2.17")</span>
+              </div>
+              <input type="range" id="slider-length" class="range-slider" min="15" max="100" step="1" value="55">
+            </div>
+
+            <!-- Depth / Thickness (Z) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="slider-width" data-i18n-en="Ornament Front-to-Back Depth (Y)"
+                  data-i18n-zh="顶件前后纵深 / 厚 (Y)">Ornament Front-to-Back Depth (Y)</label>
+                <span id="val-width" class="form-value-badge">35 mm (1.38")</span>
+              </div>
+              <input type="range" id="slider-width" class="range-slider" min="10" max="80" step="1" value="35">
+            </div>
+
+            <!-- Vertical Height (Z) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="slider-height" data-i18n-en="Ornament Vertical Height (Z)"
+                  data-i18n-zh="顶件立面高度 (Z)">Ornament Vertical Height (Z)</label>
+                <span id="val-height" class="form-value-badge">65 mm (2.56")</span>
+              </div>
+              <input type="range" id="slider-height" class="range-slider" min="15" max="120" step="1" value="65">
+            </div>
+          </div>
+
+          <!-- ================= [Channel B] Pro 3D STL Mesh Mode ================= -->
+          <div id="section-pro-mode" style="display: none;">
+            <h2 class="panel-section-title">
+              <span class="step-badge">1</span>
+              <span data-i18n-en="3D CAD Mesh Divergence Integration" data-i18n-zh="3D 网格高斯散度微积分">3D CAD Mesh Divergence Integration</span>
+            </h2>
+
+            <div id="dropzone-box" class="upload-dropzone" role="button" tabindex="0"
+              aria-label="Upload 3D STL or OBJ file">
+              <div class="dropzone-icon" aria-hidden="true">📐</div>
+              <div class="dropzone-title" data-i18n-en="Click or Drag &amp; Drop .STL / .OBJ File"
+                data-i18n-zh="点击或拖拽上传 .STL / .OBJ 三维模型">Click or Drag &amp; Drop .STL / .OBJ File</div>
+              <div class="dropzone-hint"
+                data-i18n-en="100% Client-Side Computation — CAD Files Never Leave Your Browser"
+                data-i18n-zh="100% 浏览器本地微积分运算，模具图纸绝不上传云端">100% Client-Side Computation — CAD Files Never Leave Your Browser</div>
+              <label for="file-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Upload 3D STL or OBJ file</label>
+              <input type="file" id="file-input" accept=".stl,.obj" style="display: none;">
+            </div>
+
+            <!-- Sample Watertight STL Buttons -->
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;"
+                data-i18n-en="Or load a watertight factory benchmark STL:"
+                data-i18n-zh="或一键加载金瓒车间水密测试网格：">Or load a watertight factory benchmark STL:</div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button type="button" class="tool-btn sample-model-btn" data-sample="stag_head"
+                  data-i18n-en="🦌 Stag Antler Bust" data-i18n-zh="🦌 皇家鹿头圆雕">🦌 Stag Antler Bust</button>
+                <button type="button" class="tool-btn sample-model-btn" data-sample="geo_crystal"
+                  data-i18n-en="💎 Octagon Crystal" data-i18n-zh="💎 八角切面水晶">💎 Octagon Crystal</button>
+                <button type="button" class="tool-btn sample-model-btn" data-sample="crest_badge"
+                  data-i18n-en="🛡️ Winery Crest" data-i18n-zh="🛡️ 酒庄家族盾徽">🛡️ Winery Crest</button>
+              </div>
+            </div>
+
+            <!-- Mesh Readout Box -->
+            <div id="mesh-info-box"
+              style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 12px;">
+              <div style="font-weight: 700; color: #10B981; margin-bottom: 4px;">
+                ✓ <span id="mesh-filename">sample_stag_head.stl</span>
+              </div>
+              <div style="color: var(--text-secondary);">
+                <span data-i18n-en="Bounding Box:" data-i18n-zh="外接包围盒:">Bounding Box:</span>
+                <span id="mesh-dims" style="color: #fff; font-family: monospace;">56.3 × 36.8 × 66.5 mm</span>
+              </div>
+              <div style="color: var(--text-secondary);">
+                <span data-i18n-en="Divergence Solid Volume:" data-i18n-zh="散度积分净体积:">Divergence Solid Volume:</span>
+                <span id="mesh-vol" style="color: #38BDF8; font-weight: 700;">19.04 cm³</span>
+              </div>
+            </div>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 20px 0;">
+
+          <!-- ================= Common Section: Alloy, Core-Pulling & Base ================= -->
+          <h2 class="panel-section-title">
+            <span class="step-badge">2</span>
+            <span data-i18n-en="Alloy, Core-Pulling &amp; Electroplating" data-i18n-zh="合金基材、模具抽芯与表面电镀">Alloy, Core-Pulling &amp; Electroplating</span>
+          </h2>
+
+          <!-- Top Metal Alloy -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="select-material" data-i18n-en="Top Ornament Alloy (Density)"
+                data-i18n-zh="顶件金属合金基材 (Alloy &amp; Density)">Top Ornament Alloy (Density)</label>
+            </div>
+            <select id="select-material" class="form-select">
+              <option value="zn-zamak3" selected data-i18n-en="Zamak 3 Zinc Alloy (6.60 g/cm³ · Die-Cast)"
+                data-i18n-zh="3号压铸锌合金 (Zamak 3 - 6.60 g/cm³ · 3D雕塑首选)">Zamak 3 Zinc Alloy (6.60 g/cm³ · Die-Cast)</option>
+              <option value="zn-zamak5" data-i18n-en="Zamak 5 High-Strength Zinc Alloy (6.70 g/cm³)"
+                data-i18n-zh="5号高强锌合金 (Zamak 5 - 6.70 g/cm³ · 高硬耐磨)">Zamak 5 High-Strength Zinc Alloy (6.70 g/cm³)</option>
+              <option value="ss-304" data-i18n-en="SUS304 Food-Grade Stainless Steel (7.93 g/cm³)"
+                data-i18n-zh="SUS304 食品级不锈钢 (7.93 g/cm³ · CNC车削)">SUS304 Food-Grade Stainless Steel (7.93 g/cm³)</option>
+              <option value="cu-h65" data-i18n-en="H65 / C26000 Solid Brass (8.50 g/cm³)"
+                data-i18n-zh="H65 实心黄铜 (C26000 - 8.50 g/cm³ · 奢华重磅)">H65 / C26000 Solid Brass (8.50 g/cm³)</option>
+              <option value="al-6061" data-i18n-en="6061 Anodized Aluminium Alloy (2.70 g/cm³)"
+                data-i18n-zh="6061 阳极氧化铝合金 (2.70 g/cm³ · 超高件降重心)">6061 Anodized Aluminium Alloy (2.70 g/cm³)</option>
+            </select>
+          </div>
+
+          <!-- Die-Cast Core-Pulling / Hollowing Ratio -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="select-hollowing"
+                data-i18n-en="Internal Core-Pulling / Hollowing (η)"
+                data-i18n-zh="模具滑块抽芯掏空率 (Core-Pulling η)">Internal Core-Pulling / Hollowing (η)</label>
+            </div>
+            <select id="select-hollowing" class="form-select">
+              <option value="solid" data-i18n-en="100% Solid Cast (No Core-Pulling · η = 1.00)"
+                data-i18n-zh="100% 全实心浇注 (无抽芯 · η = 1.00)">100% Solid Cast (No Core-Pulling · η = 1.00)</option>
+              <option value="shallow" data-i18n-en="15% Shallow Back Recess (η = 0.85)"
+                data-i18n-zh="15% 背面浅凹减重槽 (η = 0.85)">15% Shallow Back Recess (η = 0.85)</option>
+              <option value="light-core" selected
+                data-i18n-en="30% Standard Core-Pulling (Wall ~3.0 mm · η = 0.70)"
+                data-i18n-zh="30% 标准模具滑块抽芯 (壁厚 ~3.0 mm · η = 0.70)">30% Standard Core-Pulling (Wall ~3.0 mm · η = 0.70)</option>
+              <option value="deep-core" data-i18n-en="50% Deep Thin-Wall Coring (Wall ~2.0 mm · η = 0.50)"
+                data-i18n-zh="50% 深度薄壁抽芯掏空 (壁厚 ~2.0 mm · η = 0.50)">50% Deep Thin-Wall Coring (Wall ~2.0 mm · η = 0.50)</option>
+            </select>
+            <div id="hollowing-warning-box" class="hollowing-alert" role="alert"></div>
+          </div>
+
+          <!-- Electroplating Finish Swatches -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <span class="form-label" data-i18n-en="Electroplating Surface Finish"
+                data-i18n-zh="3D 电镀表面处理预览 (Plating Finish)">Electroplating Surface Finish</span>
+              <span id="val-finish-name" class="form-value-badge">24K Mirror Gold Plating</span>
+            </div>
+            <div class="finish-swatches" role="radiogroup" aria-label="Electroplating Surface Finish">
+              <button type="button" class="swatch-btn swatch-gold active" data-finish="gold"
+                title="24K Mirror Gold Plating" aria-label="24K Mirror Gold Plating"></button>
+              <button type="button" class="swatch-btn swatch-chrome" data-finish="chrome"
+                title="Bright Nickel / Mirror Chrome" aria-label="Bright Nickel / Mirror Chrome"></button>
+              <button type="button" class="swatch-btn swatch-bronze" data-finish="bronze"
+                title="Antique Brushed Bronze" aria-label="Antique Brushed Bronze"></button>
+              <button type="button" class="swatch-btn swatch-black" data-finish="black"
+                title="Satin Gunmetal / Black Nickel" aria-label="Satin Gunmetal / Black Nickel"></button>
+            </div>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 20px 0;">
+
+          <h2 class="panel-section-title">
+            <span class="step-badge">3</span>
+            <span data-i18n-en="Lower Stem &amp; Bottleneck Bore" data-i18n-zh="下部塞体配重与适用瓶口内径">Lower Stem &amp; Bottleneck Bore</span>
+          </h2>
+
+          <!-- Base Insert Configuration -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="select-base-config" data-i18n-en="Lower Tapered Stem &amp; Seal"
+                data-i18n-zh="下部锥柱材质与密封胶圈 (Shore A 60±5)">Lower Tapered Stem &amp; Seal</label>
+            </div>
+            <select id="select-base-config" class="form-select">
+              <option value="zinc-silicone" selected
+                data-i18n-en="Zamak 3 Tapered Stem + 3-Rib Food-Grade Silicone (26.5 g)"
+                data-i18n-zh="压铸锌合金锥体 + 三道食品级硅胶密封圈 (26.5 g)">Zamak 3 Tapered Stem + 3-Rib Food-Grade Silicone (26.5 g)</option>
+              <option value="ss304-silicone"
+                data-i18n-en="Heavy SUS304 CNC Stem + Silicone Counterweight (38.0 g)"
+                data-i18n-zh="加重型 SUS304 不锈钢车削底座 + 硅胶圈 (38.0 g)">Heavy SUS304 CNC Stem + Silicone Counterweight (38.0 g)</option>
+              <option value="brass-cork" data-i18n-en="Solid Brass Core + Natural Portuguese Cork (22.0 g)"
+                data-i18n-zh="黄铜芯轴 + 天然葡萄牙软木塞底座 (22.0 g)">Solid Brass Core + Natural Portuguese Cork (22.0 g)</option>
+            </select>
+          </div>
+
+          <!-- Bottleneck Inner Diameter -->
+          <div class="form-group">
+            <div class="form-label-row">
+              <label class="form-label" for="slider-bore" data-i18n-en="Bottleneck Bore Diameter (CETIE)"
+                data-i18n-zh="目标酒瓶瓶口内径 (CETIE 标准)">Bottleneck Bore Diameter (CETIE)</label>
+              <span id="val-bore" class="form-value-badge">18.5 mm (0.73" · Bordeaux)</span>
+            </div>
+            <input type="range" id="slider-bore" class="range-slider" min="17.0" max="21.5" step="0.5" value="18.5">
+            <div class="bore-chips" role="group" aria-label="Quick Bottle Bore Presets">
+              <button type="button" class="chip-btn" data-bore="17.5" data-i18n-en="17.5mm Ice Wine" data-i18n-zh="17.5mm 冰酒">17.5mm Ice Wine</button>
+              <button type="button" class="chip-btn active" data-bore="18.5" data-i18n-en="18.5mm Bordeaux" data-i18n-zh="18.5mm 波尔多">18.5mm Bordeaux</button>
+              <button type="button" class="chip-btn" data-bore="19.5" data-i18n-en="19.5mm Burgundy" data-i18n-zh="19.5mm 勃艮第">19.5mm Burgundy</button>
+              <button type="button" class="chip-btn" data-bore="21.0" data-i18n-en="21.0mm Spirits" data-i18n-zh="21.0mm 烈酒">21.0mm Spirits</button>
+            </div>
+            <div id="bore-fit-hint" style="font-size: 11px; color: #10B981; margin-top: 6px;"
+              data-i18n-en="✓ Optimal Compression Seal (Interference fit +1.5 to +2.0 mm)"
+              data-i18n-zh="✓ 黄金过盈密封区（硅胶肋片压缩量 +1.5 ~ +2.0 mm，严丝合缝）">
+              ✓ Optimal Compression Seal (Interference fit +1.5 to +2.0 mm)
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Right Column: 3D Viewport, KPIs, Stability Banner & Export Logistics -->
+      <section class="viewport-panel">
+
+        <!-- 3D Interactive Canvas -->
+        <div class="viewport-container">
+          <div class="viewport-overlay-top">
+            <div class="viewport-status-pill">
+              <span class="dot-live"></span>
+              <span id="viewport-mode-text"
+                data-i18n-en="3D Real-Time CG &amp; 15° Anti-Tilt Statics Engine"
+                data-i18n-zh="3D 实时组合质心与 15° 抗倾覆力矩求解器">3D Real-Time CG &amp; 15° Anti-Tilt Statics Engine</span>
+            </div>
+
+            <div class="viewport-toolbar" role="toolbar" aria-label="3D Viewport Tools">
+              <button type="button" id="btn-wobble-test" class="tool-btn" title="Simulate 15° Tilt Wobble Test"
+                data-i18n-en="🔔 15° Tilt Wobble Test" data-i18n-zh="🔔 15° 倾斜摇摆测试">🔔 15° Tilt Wobble Test</button>
+              <button type="button" id="btn-toggle-clip" class="tool-btn" aria-pressed="false"
+                title="Cross-Section Cutaway View" data-i18n-en="🔪 Cross-Section" data-i18n-zh="🔪 剖切透视">🔪 Cross-Section</button>
+              <button type="button" id="btn-toggle-wireframe" class="tool-btn" aria-pressed="false"
+                title="Toggle Mesh Wireframe" data-i18n-en="🕸️ Wireframe" data-i18n-zh="🕸️ 网格线框">🕸️ Wireframe</button>
+              <button type="button" id="btn-reset-cam" class="tool-btn" title="Reset Camera View"
+                data-i18n-en="🎯 Reset View" data-i18n-zh="🎯 视角复位">🎯 Reset View</button>
+            </div>
+          </div>
+
+          <div id="three-canvas-container"></div>
+
+          <div class="viewport-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #EF4444; box-shadow: 0 0 8px #EF4444;"></span>
+              <span data-i18n-en="Composite CG Marker (Z_total)" data-i18n-zh="组合质心球 (Z_total)">Composite CG Marker (Z_total)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #F59E0B;"></span>
+              <span data-i18n-en="Bottle Rim Pivot Plane (Z = 0 mm)" data-i18n-zh="瓶口支点基准面 (Z = 0 mm)">Bottle Rim Pivot Plane (Z = 0 mm)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #38BDF8;"></span>
+              <span data-i18n-en="Left-Drag: Orbit · Scroll: Zoom" data-i18n-zh="左键旋转 · 滚轮缩放">Left-Drag: Orbit · Scroll: Zoom</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Core KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-title" data-i18n-en="Total Assembly Mass" data-i18n-zh="整塞装配总克重">Total Assembly Mass</div>
+            <div>
+              <span id="kpi-total-mass" class="kpi-value">118.4</span>
+              <span id="kpi-total-unit" class="kpi-unit">g (4.18 oz)</span>
+            </div>
+            <div id="kpi-mass-breakdown" class="kpi-desc">Top: 91.9 g + Base: 26.5 g</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title" data-i18n-en="Composite CG Height (Z_total)" data-i18n-zh="组合质心高度 (Z_total)">Composite CG Height (Z_total)</div>
+            <div>
+              <span id="kpi-z-centroid" class="kpi-value">+16.9</span>
+              <span id="kpi-z-unit" class="kpi-unit">mm (+0.67")</span>
+            </div>
+            <div id="kpi-z-desc" class="kpi-desc">Relative to Bottle Rim (Z = 0)</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title" data-i18n-en="15° Anti-Tilt Safety Factor" data-i18n-zh="15° 抗倾覆安全系数">15° Anti-Tilt Safety Factor</div>
+            <div>
+              <span id="kpi-safety-factor" class="kpi-value">2.45</span>
+              <span class="kpi-unit">×</span>
+            </div>
+            <div id="kpi-critical-angle" class="kpi-desc">Critical Tipping Angle: 38.2°</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-title" data-i18n-en="Effective Top Metal Volume" data-i18n-zh="顶件净金属体积">Effective Top Metal Volume</div>
+            <div>
+              <span id="kpi-volume" class="kpi-value">13.92</span>
+              <span class="kpi-unit">cm³</span>
+            </div>
+            <div id="kpi-hollowing-desc" class="kpi-desc">30% Core-Pulling Applied</div>
+          </div>
+        </div>
+
+        <!-- Stability Diagnosis & DFM Recommendations Banner -->
+        <div id="stability-banner" class="stability-banner STABLE" role="status" aria-live="polite">
+          <div>
+            <div class="stability-title">
+              <span id="stability-icon" aria-hidden="true">🟢</span>
+              <span id="stability-label">STABLE (Rock-Solid)</span>
+            </div>
+            <div id="stability-summary" class="stability-desc">
+              Composite CG is well-controlled. Passes 15° bottle-tilt and refrigerator door-slam vibration tests with zero wobble.
+            </div>
+            <ul id="dfm-advice-list"
+              style="margin: 8px 0 0 18px; font-size: 12px; color: var(--text-primary); line-height: 1.5;">
+            </ul>
+          </div>
+
+          <div style="min-width: 170px; text-align: right;">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;"
+              data-i18n-en="Overturning vs Restoring Torque" data-i18n-zh="倾覆力矩 vs 密封恢复力矩">Overturning vs Restoring Torque</div>
+            <div style="font-family: monospace; font-size: 13px; color: var(--text-primary);">
+              M_tilt: <span id="val-m-tilt" style="color: #F59E0B;">4.2</span> N·mm<br>
+              M_rest: <span id="val-m-rest" style="color: #10B981;">14.8</span> N·mm
+            </div>
+          </div>
+        </div>
+
+        <!-- B2B Export Carton & Air/Sea Freight Calculator -->
+        <div class="logistics-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0;"
+                data-i18n-en="📦 B2B Export Anti-Burst Carton Packing &amp; Freight Estimator (≤18.0 kg / 39.7 lbs per Ctn)"
+                data-i18n-zh="📦 外贸大货防爆箱装箱规格与海空运费测算 (单箱 ≤18.0 kg / 39.7 lbs)">
+                📦 B2B Export Anti-Burst Carton Packing &amp; Freight Estimator (≤18.0 kg / 39.7 lbs per Ctn)
+              </h2>
+              <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;"
+                data-i18n-en="Master Carton 42×32×28 cm · Includes individual gift box (+28 g/pc) &amp; K=K corrugated carton (+0.95 kg)"
+                data-i18n-zh="基于出口标准外箱 (42×32×28 cm)，已含单支礼盒内托 (+28 g/支) 与五层瓦楞纸箱皮重 (+0.95 kg)">
+                Master Carton 42×32×28 cm · Includes individual gift box (+28 g/pc) &amp; K=K corrugated carton (+0.95 kg)
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="input-order-qty" style="font-size: 12px; color: var(--text-muted); font-weight: 600;"
+                data-i18n-en="Order Qty:" data-i18n-zh="采购订单数量:">Order Qty:</label>
+              <input type="number" id="input-order-qty" value="500" min="50" max="100000" step="50"
+                style="width: 95px; background: #0B132B; border: 1px solid #38BDF8; color: #38BDF8; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-weight: 700; font-size: 14px;">
+              <span style="font-size: 12px; color: var(--text-muted);">pcs</span>
+            </div>
+          </div>
+
+          <div class="logistics-grid">
+            <div>
+              <div class="kpi-title" data-i18n-en="Safe Packing &amp; Cartons" data-i18n-zh="安全装箱量 &amp; 总箱数">Safe Packing &amp; Cartons</div>
+              <div id="ship-cartons" style="font-size: 18px; font-weight: 700; color: var(--text-primary);">5 Ctns (100 pcs/ctn)</div>
+              <div id="ship-gross" class="kpi-desc">15.6 kg (34.4 lbs) / ctn</div>
+            </div>
+            <div>
+              <div class="kpi-title" data-i18n-en="Total Order Gross Wt" data-i18n-zh="整单预估总毛重">Total Order Gross Wt</div>
+              <div id="ship-total-gross" style="font-size: 18px; font-weight: 700; color: var(--text-primary);">78.0 kg (172.0 lbs)</div>
+              <div id="ship-dim" class="kpi-desc">Volumetric: 7.53 kg/ctn | 0.188 CBM</div>
+            </div>
+            <div>
+              <div class="kpi-title" data-i18n-en="Chargeable Weight" data-i18n-zh="国际快递计费重">Chargeable Weight</div>
+              <div id="ship-chargeable" style="font-size: 18px; font-weight: 700; color: var(--accent-cyan);">78.0 kg</div>
+              <div id="ship-dominant-tag" class="kpi-desc">Billed by Actual Deadweight</div>
+            </div>
+            <div>
+              <div class="kpi-title" data-i18n-en="Est. Air Express vs Sea" data-i18n-zh="预估国际快递 vs 海运专线">Est. Air Express vs Sea</div>
+              <div id="ship-index" style="font-size: 18px; font-weight: 700; color: var(--accent-gold);">~$530 vs ~$165</div>
+              <div class="kpi-desc" data-i18n-en="DHL/FedEx vs DDP Sea LCL" data-i18n-zh="商业快递 vs 海运包税专线">DHL/FedEx vs DDP Sea LCL</div>
+            </div>
+          </div>
+
+          <div id="ship-advice-text"
+            style="margin-top: 14px; padding: 10px 14px; background: rgba(8, 12, 20, 0.7); border-left: 3px solid #38BDF8; border-radius: 6px; font-size: 12px; color: #CBD5E1; line-height: 1.5;">
+          </div>
+        </div>
+
+        <!-- Action CTA Group -->
+        <div class="action-btn-group">
+          <button type="button" id="btn-export-report" class="btn-primary">
+            <span data-i18n-en="📄 Generate DFM Engineering &amp; Freight Report (PNG)"
+              data-i18n-zh="📄 生成重心力学与模具 DFM 评估报告 (PNG)">📄 Generate DFM Engineering &amp; Freight Report (PNG)</span>
+          </button>
+          <a href="https://www.goldvalleyltd.com/contact-us/" target="_blank" rel="noopener" class="btn-gold">
+            <span data-i18n-en="🛠️ Send Spec to Factory for Tooling Quote ↗"
+              data-i18n-zh="🛠️ 发送规格至金瓒工程师获取报价 ↗">🛠️ Send Spec to Factory for Tooling Quote ↗</span>
+          </a>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 3. Footer & Verified Authoritative Backlinks -->
+    <footer class="footer-section">
+      <div data-i18n-en="© 2026 Gold Valley Industrial Gifts Co., Ltd. Open-Source Barware Engineering Lab (MIT License)."
+        data-i18n-zh="© 2026 Gold Valley Industrial Gifts Co., Ltd. (金瓒五金工艺) · 开源酒具工程实验室 (MIT License)">
+        © 2026 Gold Valley Industrial Gifts Co., Ltd. Open-Source Barware Engineering Lab (MIT License).
+      </div>
+      <nav class="footer-links" aria-label="Factory Engineering Resources">
+        <a href="https://www.goldvalleyltd.com/wine-barware/wine-stoppers/" target="_blank" rel="noopener"
+          data-i18n-en="Custom Metal Wine Stoppers" data-i18n-zh="定制金属红酒塞产线">Custom Metal Wine Stoppers</a>
+        <a href="https://www.goldvalleyltd.com/news/why-anti-slip-rings-matter-in-metal-wine-stoppers/" target="_blank"
+          rel="noopener" data-i18n-en="Why Anti-Slip Silicone Rings Matter"
+          data-i18n-zh="金属酒塞防滑硅胶圈工程指南">Why Anti-Slip Silicone Rings Matter</a>
+        <a href="https://www.goldvalleyltd.com/contact-us/" target="_blank" rel="noopener"
+          data-i18n-en="Request Free Mold DFM Review" data-i18n-zh="获取免费模具 DFM 审查与打样">Request Free Mold DFM Review</a>
+      </nav>
+    </footer>
+
+  </div>
+
+  <!-- 4. Native <dialog> Modal for High-Res Spec Sheet Preview & Download -->
+  <dialog id="report-modal" class="report-dialog" closedby="any" aria-labelledby="modal-report-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-report-title" style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0;"
+          data-i18n-en="📋 Gold Valley WineStopper DFM &amp; Logistics Report Preview"
+          data-i18n-zh="📋 金瓒金属红酒塞重心力学与模具 DFM 评估报告预览">
+          📋 Gold Valley WineStopper DFM &amp; Logistics Report Preview
+        </h2>
+        <button type="button" id="btn-close-modal" class="tool-btn" aria-label="Close modal"
+          data-i18n-en="✕ Close" data-i18n-zh="✕ 关闭">✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <img id="report-preview-img" class="modal-preview-img" src=""
+          alt="WineStopper DFM Engineering Spec Report">
+      </div>
+      <div class="modal-footer">
+        <a href="https://www.goldvalleyltd.com/contact-us/" target="_blank" rel="noopener" class="btn-gold"
+          style="padding: 10px 18px; font-size: 13px;"
+          data-i18n-en="💬 Consult Factory Engineer for Mold Coring"
+          data-i18n-zh="💬 联系金瓒模具工程师咨询抽芯方案">
+          💬 Consult Factory Engineer for Mold Coring
+        </a>
+        <button type="button" id="btn-download-png" class="btn-primary"
+          style="flex: none; padding: 10px 20px; font-size: 13px;"
+          data-i18n-en="⬇️ Download High-Res PNG (1200×1600)"
+          data-i18n-zh="⬇️ 下载高清 PNG 报告 (1200×1600)">
+          ⬇️ Download High-Res PNG (1200×1600)
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Core Scripts -->
+  <script src="js/engine/presets.js"></script>
+  <script src="js/engine/geometry.js"></script>
+  <script src="js/engine/physics.js"></script>
+  <script src="js/engine/shipping.js"></script>
+  <script src="js/viewer/scene.js"></script>
+  <script src="js/viewer/assembly.js"></script>
+  <script src="js/viewer/loader.js"></script>
+  <script src="js/report/export-report.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>

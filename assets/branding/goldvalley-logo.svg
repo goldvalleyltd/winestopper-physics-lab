@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+  </defs>
+  <!-- Hexagon Emblem with GV monogram -->
+  <g transform="translate(10, 6)">
+    <polygon points="24,2 45,14 45,38 24,50 3,38 3,14" fill="#0F172A" stroke="url(#goldGrad)" stroke-width="2.5"/>
+    <path d="M15,18 L33,18 L24,35 Z" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="24" cy="26" r="3" fill="url(#goldGrad)"/>
+  </g>
+  <!-- Brand Typography -->
+  <text x="68" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" fill="#F8FAFC" letter-spacing="1">GOLD VALLEY</text>
+  <text x="68" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94A3B8" letter-spacing="0.5">PRECISION METAL CRAFT &amp; BARWARE</text>
+</svg>
